@@ -3,4 +3,4 @@ project(URStack)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(URStack main.cpp URStack.cpp URStack.h)
+add_executable(URStack main.cpp URStack.cpp URStack.h CustomIO.cpp CustomIO.h)

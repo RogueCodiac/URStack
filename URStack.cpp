@@ -46,49 +46,13 @@
 
 
 #include "URStack.h"
+#include "CustomIO.h"
 
 #include <utility>
 #include <iostream>
 #include <exception>
 
-using std::string, std::ostream, std::min,
-        std::invalid_argument, std::cout, std::endl;
-
-/*
- * Pre-Conditions:
- *      const reference to a message to be displayed.
- *      ostream reference (optional), default is cout.
- *
- * Post-Conditions:
- *      Displays an error message.
- *
- * Displays an error message.
- */
-void displayInvalidMessage(const string& msg, ostream& out = cout) {
-    out << '\n'
-    << "\033[31;1;1m"   /* Text color becomes red, underlined, bold */
-    << msg
-    << "\033[0m"        /* Text color becomes normal */
-    << endl;
-}
-
-/*
- * Pre-Conditions:
- *      const reference to a message to be displayed.
- *      ostream reference (optional), default is cout.
- *
- * Post-Conditions:
- *      Displays an information message.
- *
- * Displays an information message.
- */
-void displayDataMessage(const string& msg, ostream& out = cout) {
-    out << '\n'
-    << "\033[33;1;1m"   /* Text becomes yellow, bold */
-    << msg
-    << "\033[0m"        /* Text becomes normal */
-    << endl;
-}
+using std::string, std::ostream, std::min, std::invalid_argument;
 
 /*
  * Pre-Conditions:
@@ -307,7 +271,7 @@ URStack::URStack(int capacity): size{0}, top{nullptr}, current{nullptr} {
     this->capacity = capacity;
 }
 
-void URStack::InsertNewAction(const string& action) {
+void URStack::insertNewAction(const string& action) {
     auto new_action = new Node{action};
     new_action->chain(current);
 
@@ -318,7 +282,6 @@ void URStack::InsertNewAction(const string& action) {
     top = current = new_action;
 
     if (isFull()) {
-        /* Keeps the junk Node */
         delete current->skip(size);
     } else {
         size++;
@@ -352,7 +315,7 @@ void URStack::redo(std::ostream &out) {
 ostream& URStack::displayDirectional(std::ostream& out, bool to_next) const {
     NodePtr current_cpy = to_next ? current : current->getPrev();
 
-    displayDataMessage(current_cpy->getData());
+    displayDataMessage(current_cpy->getData(), out);
     current_cpy = to_next ? current_cpy->getNext() : current_cpy->getPrev();
 
     while (current_cpy) {
@@ -366,11 +329,11 @@ ostream& URStack::displayDirectional(std::ostream& out, bool to_next) const {
 ostream& URStack::displayAll(std::ostream& out) const {
     NodePtr top_cpy = top;
 
-    displayDataMessage(top_cpy->getData());
+    displayDataMessage(top_cpy->getData(), out);
     top_cpy = top_cpy->getNext();
 
     while (top_cpy) {
-        displayDataMessage(" | " + top_cpy->getData());
+        displayDataMessage(" | " + top_cpy->getData(), out);
         top_cpy = top_cpy->getNext();
     }
 

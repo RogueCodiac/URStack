@@ -219,7 +219,7 @@ private:
 public:
     explicit URStack(int capacity = 20);
 
-    void InsertNewAction(const std::string&);
+    void insertNewAction(const std::string&);
     void undo(std::ostream& out = std::cout);
     void redo(std::ostream& out = std::cout);
     [[nodiscard]] std::ostream& displayAll(std::ostream&) const;
