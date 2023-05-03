@@ -23,12 +23,12 @@ int displayMenu(ostream& out) {
             "Display all previous actions",
             "Display all next actions",
             "Clear stack",
+            "Stack size",
             "Exit",
     };
 
     for (int i = 0; i < options.size(); i++) {
-        out << (i + 1)
-            << "-"
+        displayDataMessage(to_string(i + 1) + '-', out)
             << "\t\t"
             << options[i]
             << '\n';
@@ -41,26 +41,38 @@ int displayMenu(ostream& out) {
 void insertNewAction(URStack& stack, istream& in, ostream& out) {
     string new_action = get("Enter a new action", out, in);
     stack.insertNewAction(new_action);
+    out << endl;
 }
 
 void undo(URStack& stack, ostream& out) {
+    out << '\n';
     stack.undo(out);
+    out << '\n' << endl;
 }
 
 void redo(URStack& stack, ostream& out) {
+    out << '\n';
     stack.redo(out);
+    out << '\n' << endl;
 }
 
 ostream& displayAll(URStack& stack, ostream& out) {
-    return stack.displayAll(out) << endl;
+    return stack.displayAll(out) << '\n' << endl;
 }
 
 ostream& displayPrevious(URStack& stack, ostream& out) {
-    return stack.displayPrevious(out) << endl;
+    return stack.displayPrevious(out) << '\n' << endl;
 }
 
 ostream& displayNext(URStack& stack, ostream& out) {
-    return stack.displayNext(out) << endl;
+    return stack.displayNext(out) << '\n' << endl;
+}
+
+void displaySize(URStack& stack, ostream& out) {
+    out << '\n';
+    displayDataMessage(
+            "Stack size is: " + to_string(stack.getSize()),
+            out) << '\n' << endl;
 }
 
 int main() {
@@ -99,9 +111,12 @@ int main() {
                 stack = clear(cout, cin);
                 break;
             case 8:
+                displaySize(stack, cout);
+                break;
+            case 9:
                 return 0;
             default:
-                displayInvalidMessage("Invalid option!", cout);
+                displayInvalidMessage("Invalid option!", cout) << '\n' << endl;
         }
     }
 }

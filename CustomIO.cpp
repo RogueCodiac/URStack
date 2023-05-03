@@ -17,12 +17,11 @@ using std::string, std::endl, std::ostream,
  *
  * Displays an error message.
  */
-void displayInvalidMessage(const string& msg, ostream& out) {
-    out << '\n'
-        << "\033[31;1;1m"   /* Text color becomes red, underlined, bold */
-        << msg
-        << "\033[0m"        /* Text color becomes normal */
-        << endl;
+ostream& displayInvalidMessage(const string& msg, ostream& out) {
+    return
+        out << "\033[31;1;1m"   /* Text color becomes red, underlined, bold */
+            << msg
+            << "\033[0m";       /* Text color becomes normal */
 }
 
 /*
@@ -35,10 +34,11 @@ void displayInvalidMessage(const string& msg, ostream& out) {
  *
  * Displays an information message.
  */
-void displayDataMessage(const string& msg, ostream& out) {
-    out << "\033[36;1;1m"   /* Text becomes cyan, bold */
-        << msg
-        << "\033[0m";        /* Text becomes normal */
+ostream& displayDataMessage(const string& msg, ostream& out) {
+    return
+        out << "\033[36;1;1m"   /* Text becomes cyan, bold */
+            << msg
+            << "\033[0m";        /* Text becomes normal */
 }
 
 /*
@@ -50,8 +50,8 @@ void displayDataMessage(const string& msg, ostream& out) {
  *
  * Displays a separator of width 70.
  */
-void displaySeparator(ostream& out) {
-    out << '\n' << string(70, '-') << endl;
+ostream& displaySeparator(ostream& out) {
+    return out << '\n' << string(70, '-') << endl;
 }
 
 /*
@@ -68,8 +68,13 @@ void displaySeparator(ostream& out) {
 string get(const string& prompt, ostream& out, istream& in) {
     string result;
 
-    out << prompt << ": ";
+    out << prompt
+        << ": "
+        << "\033[36;1;1m";   /* Text becomes cyan, bold */
+
     getline(in, result);
+
+    out << "\033[0m";  /* Text becomes normal */
 
     return result;
 }
@@ -118,7 +123,7 @@ int getInt(const string& prompt, ostream& out, istream& in,
                         "Invalid integer must be >= "
                         + to_string(lower),
                         out
-                );
+                ) << '\n' << endl;
                 continue;
             } else if (upper != -1 and upper < result) {
                 /* Higher than maximum */
@@ -126,13 +131,14 @@ int getInt(const string& prompt, ostream& out, istream& in,
                         "Invalid integer must be between "
                         + to_string(lower) + " & " + to_string(upper),
                         out
-                );
+                ) << '\n' << endl;
                 continue;
             }
 
             return result;
         } catch (invalid_argument& ignored) {
-            displayInvalidMessage("Invalid integer input!", out);
+            displayInvalidMessage("Invalid integer input!", out)
+            << '\n' << endl;
         }
     }
 }

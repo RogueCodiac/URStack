@@ -9,11 +9,11 @@
 #include <iostream>
 #include <exception>
 
-void displayInvalidMessage(const std::string&, std::ostream&);
+std::ostream& displayInvalidMessage(const std::string&, std::ostream&);
 
-void displayDataMessage(const std::string&, std::ostream&);
+std::ostream& displayDataMessage(const std::string&, std::ostream&);
 
-void displaySeparator(std::ostream&);
+std::ostream& displaySeparator(std::ostream&);
 
 std::string get(const std::string&, std::ostream&, std::istream&);
 

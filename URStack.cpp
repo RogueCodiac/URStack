@@ -52,7 +52,8 @@
 #include <iostream>
 #include <exception>
 
-using std::string, std::ostream, std::min, std::invalid_argument;
+using std::string, std::ostream,
+        std::min, std::max, std::invalid_argument;
 
 /*
  * Pre-Conditions:
@@ -124,6 +125,10 @@ URStack::Node& URStack::Node::operator=(const Node& other) {
  * Deletes all the following Node instances, till it reaches a nullptr.
  */
 URStack::Node::~Node() {
+    if (prev) {
+        prev->chain(nullptr);
+    }
+
     /* Deleting nullptr has no effect */
     delete next;
 
@@ -201,9 +206,18 @@ URStack::NodePtr URStack::Node::getPrev() const {
 URStack::NodePtr URStack::Node::skip(int n) {
     Node *result = this;
 
-    /* Perform n-hops */
-    while (result and 0 < n--) {
-        result = result->getNext();
+    if (n < 0) {
+        n *= -1;
+
+        /* Perform n-hops */
+        while (result and 0 < n--) {
+            result = result->getPrev();
+        }
+    } else {
+        /* Perform n-hops */
+        while (result and 0 < n--) {
+            result = result->getNext();
+        }
     }
 
     return result;
@@ -222,27 +236,17 @@ URStack::NodePtr URStack::Node::skip(int n) {
  * Deletes a given number of Node instances following a Node instance.
  * Returns a pointer to the new next Node instance.
  */
-int URStack::Node::unchain(Node *chain_end) {
+void URStack::Node::unchain(Node *chain_end) {
     if (this == chain_end) {
-        return 0;
-    }
-
-    int counter{1};
-    NodePtr current_node{this};
-
-    /* Used mainly to count the number of deleted Nodes */
-    while (current_node->getNext() != chain_end) {
-        current_node = current_node->getNext();
-        counter++;
+        return;
     }
 
     if (chain_end) {
-        current_node->chain(nullptr);
+        chain_end->getPrev()->chain(nullptr);
+        chain_end->prev = nullptr;
     }
 
     delete this;
-
-    return counter;
 }
 
 /*
@@ -259,7 +263,7 @@ void URStack::Node::chain(Node *newNext) {
     next = newNext;
 
     if (newNext) {
-        prev = newNext->getPrev();
+        newNext->prev = this;
     }
 }
 
@@ -273,15 +277,25 @@ URStack::URStack(int capacity): size{0}, top{nullptr}, current{nullptr} {
 
 void URStack::insertNewAction(const string& action) {
     auto new_action = new Node{action};
-    new_action->chain(current);
 
-    if (top) {
-        size -= top->unchain(current);
+    if (isEmpty()) {
+        current = new_action;
+        size = 1;
+
+        delete top;
+        top = new_action;
+
+        return;
     }
 
+    if (top) {
+        top->unchain(current);
+    }
+
+    new_action->chain(current);
     top = current = new_action;
 
-    if (isFull()) {
+    if (size == capacity) {
         delete current->skip(size);
     } else {
         size++;
@@ -289,11 +303,11 @@ void URStack::insertNewAction(const string& action) {
 }
 
 void URStack::undo(ostream& out) {
-    if (!isEmpty()) {
-        displayDataMessage("Undid: " + current->getData(), out);
+    if (not isEmpty()) {
+        displayDataMessage("Undoing: " + current->getData(), out);
 
         if (size != 1) {
-            current = current->getNext();
+            current = current->skip(1);
         }
 
         size--;
@@ -303,30 +317,37 @@ void URStack::undo(ostream& out) {
 }
 
 void URStack::redo(std::ostream &out) {
-    if (!isEmpty() and current->getPrev()) {
-        current = current->getPrev();
-        displayDataMessage("Redid: " + current->getData(), out);
+    if (top and (current->getPrev() or isEmpty())) {
+        if (not isEmpty()) {
+            current = current->skip(-1);
+        }
+
+        displayDataMessage("Redoing: " + current->getData(), out);
         size++;
     } else {
         displayInvalidMessage("No previous actions\a", out);
     }
 }
 
-ostream& URStack::displayDirectional(std::ostream& out, bool to_next) const {
-    NodePtr current_cpy = to_next ? current : current->getPrev();
+ostream& URStack::displayDirectional(std::ostream& out, bool to_prev) const {
+    NodePtr current_cpy = to_prev or isEmpty() ? current : current->getPrev();
 
     displayDataMessage(current_cpy->getData(), out);
-    current_cpy = to_next ? current_cpy->getNext() : current_cpy->getPrev();
+    current_cpy = to_prev ? current_cpy->getNext() : current_cpy->getPrev();
 
     while (current_cpy) {
         displayDataMessage(" | " + current_cpy->getData(), out);
-        current_cpy = to_next ? current_cpy->getNext() : current_cpy->getPrev();
+        current_cpy = to_prev ? current_cpy->getNext() : current_cpy->getPrev();
     }
 
     return out;
 }
 
 ostream& URStack::displayAll(std::ostream& out) const {
+    if (not top) {
+        return displayInvalidMessage("No actions", out);
+    }
+
     NodePtr top_cpy = top;
 
     displayDataMessage(top_cpy->getData(), out);
@@ -341,9 +362,21 @@ ostream& URStack::displayAll(std::ostream& out) const {
 }
 
 ostream& URStack::displayPrevious(std::ostream& out) const {
-    return displayDirectional(out, false);
+    if (not current or isEmpty()) {
+        return displayDataMessage("No previous actions", out);
+    }
+
+    return displayDirectional(out, true);
 }
 
 ostream& URStack::displayNext(std::ostream& out) const {
-    return displayDirectional(out, true);
+    if (not current or not (current->getPrev() or isEmpty())) {
+        return displayDataMessage("No next actions", out);
+    }
+
+    return displayDirectional(out, false);
+}
+
+int URStack::getSize() const {
+    return size;
 }

@@ -141,7 +141,7 @@ private:
          * Deletes a given number of Node instances following a Node instance.
          * Returns a pointer to the new next Node instance.
          */
-        int unchain(Node*);
+        void unchain(Node*);
 
         /*
          * Pre-Conditions:
@@ -207,11 +207,7 @@ private:
     int size;
 
     [[nodiscard]] std::ostream& displayDirectional(std::ostream&,
-                                                   bool to_next) const;
-
-    [[nodiscard]] inline bool isFull() const {
-        return size == capacity;
-    }
+                                                   bool to_prev) const;
 
     [[nodiscard]] inline bool isEmpty() const {
         return not size;
@@ -225,6 +221,7 @@ public:
     [[nodiscard]] std::ostream& displayAll(std::ostream&) const;
     [[nodiscard]] std::ostream& displayPrevious(std::ostream&) const;
     [[nodiscard]] std::ostream& displayNext(std::ostream&) const;
+    [[nodiscard]] int getSize() const;
 };
 
 
