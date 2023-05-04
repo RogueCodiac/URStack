@@ -206,8 +206,10 @@ private:
      */
     int size;
 
-    [[nodiscard]] std::ostream& displayDirectional(std::ostream&,
-                                                   bool to_prev) const;
+    [[nodiscard]] std::ostream& displayDirectionalFrom(
+            NodePtr,
+            std::ostream&,
+            bool to_right) const;
 
     [[nodiscard]] inline bool isEmpty() const {
         return not size;

@@ -329,15 +329,20 @@ void URStack::redo(std::ostream &out) {
     }
 }
 
-ostream& URStack::displayDirectional(std::ostream& out, bool to_prev) const {
-    NodePtr current_cpy = to_prev or isEmpty() ? current : current->getPrev();
+ostream& URStack::displayDirectionalFrom(
+        NodePtr from,
+        std::ostream& out,
+        bool to_right) const {
+    if (not (to_right or isEmpty())) {
+        from = from->skip(-1);
+    }
 
-    displayDataMessage(current_cpy->getData(), out);
-    current_cpy = to_prev ? current_cpy->getNext() : current_cpy->getPrev();
+    displayDataMessage(from->getData(), out);
+    from = to_right ? from->getNext() : from->getPrev();
 
-    while (current_cpy) {
-        displayDataMessage(" | " + current_cpy->getData(), out);
-        current_cpy = to_prev ? current_cpy->getNext() : current_cpy->getPrev();
+    while (from) {
+        displayDataMessage(", " + from->getData(), out);
+        from = to_right ? from->getNext() : from->getPrev();
     }
 
     return out;
@@ -348,17 +353,7 @@ ostream& URStack::displayAll(std::ostream& out) const {
         return displayInvalidMessage("No actions", out);
     }
 
-    NodePtr top_cpy = top;
-
-    displayDataMessage(top_cpy->getData(), out);
-    top_cpy = top_cpy->getNext();
-
-    while (top_cpy) {
-        displayDataMessage(" | " + top_cpy->getData(), out);
-        top_cpy = top_cpy->getNext();
-    }
-
-    return out;
+    return displayDirectionalFrom(top, out, true);
 }
 
 ostream& URStack::displayPrevious(std::ostream& out) const {
@@ -366,7 +361,7 @@ ostream& URStack::displayPrevious(std::ostream& out) const {
         return displayDataMessage("No previous actions", out);
     }
 
-    return displayDirectional(out, true);
+    return displayDirectionalFrom(current, out, true);
 }
 
 ostream& URStack::displayNext(std::ostream& out) const {
@@ -374,7 +369,7 @@ ostream& URStack::displayNext(std::ostream& out) const {
         return displayDataMessage("No next actions", out);
     }
 
-    return displayDirectional(out, false);
+    return displayDirectionalFrom(current, out, false);
 }
 
 int URStack::getSize() const {
