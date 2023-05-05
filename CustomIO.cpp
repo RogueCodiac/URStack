@@ -26,23 +26,6 @@ ostream& displayInvalidMessage(const string& msg, ostream& out) {
 
 /*
  * Pre-Conditions:
- *      const reference to a message to be displayed.
- *      ostream reference (optional), default is cout.
- *
- * Post-Conditions:
- *      Displays an information message.
- *
- * Displays an information message.
- */
-ostream& displayDataMessage(const string& msg, ostream& out) {
-    return
-        out << "\033[36;1;1m"   /* Text becomes cyan, bold */
-            << msg
-            << "\033[0m";        /* Text becomes normal */
-}
-
-/*
- * Pre-Conditions:
  *      ostream reference (optional), default is cout.
  *
  * Post-Conditions:
@@ -52,28 +35,6 @@ ostream& displayDataMessage(const string& msg, ostream& out) {
  */
 ostream& displaySeparator(ostream& out) {
     return out << '\n' << string(70, '-') << endl;
-}
-
-/*
- * Pre-Conditions:
- *      const string reference to the prompt.
- *      ostream reference (optional), default is cout.
- *      istream reference (optional), default is cin.
- *
- * Post-Conditions:
- *      Returns user string input.
- *
- * Displays the given prompt, takes string input from the user.
- */
-template<class T>
-void get(const string& prompt, ostream& out, istream& in, T& result) {
-    out << prompt
-        << ": "
-        << "\033[36;1;1m";   /* Text becomes cyan, bold */
-
-    getline(in, result);
-
-    out << "\033[0m";  /* Text becomes normal */
 }
 
 /*
