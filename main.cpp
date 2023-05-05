@@ -1,17 +1,17 @@
-#include "URStack.h"
+#include "URStack.cpp"
 #include "CustomIO.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
-URStack clear(ostream& out, istream& in) {
+URStack<string> clear(ostream& out, istream& in) {
     int new_capacity = getInt("Enter Stack capacity", out,
                               in, 1);
 
     out << endl;
 
-    return new_capacity < 0 ? URStack() : URStack(new_capacity);
+    return new_capacity < 0 ? URStack<string>() : URStack<string>(new_capacity);
 }
 
 int displayMenu(ostream& out) {
@@ -38,37 +38,44 @@ int displayMenu(ostream& out) {
     return (int) options.size();
 }
 
-void insertNewAction(URStack& stack, istream& in, ostream& out) {
+template<class DataType>
+void insertNewAction(URStack<DataType>& stack, istream& in, ostream& out) {
     string new_action = get("Enter a new action", out, in);
     stack.insertNewAction(new_action);
     out << endl;
 }
 
-void undo(URStack& stack, ostream& out) {
+template<class DataType>
+void undo(URStack<DataType>& stack, ostream& out) {
     out << '\n';
     stack.undo(out);
     out << '\n' << endl;
 }
 
-void redo(URStack& stack, ostream& out) {
+template<class DataType>
+void redo(URStack<DataType>& stack, ostream& out) {
     out << '\n';
     stack.redo(out);
     out << '\n' << endl;
 }
 
-ostream& displayAll(URStack& stack, ostream& out) {
+template<class DataType>
+ostream& displayAll(URStack<DataType>& stack, ostream& out) {
     return stack.displayAll(out) << '\n' << endl;
 }
 
-ostream& displayPrevious(URStack& stack, ostream& out) {
+template<class DataType>
+ostream& displayPrevious(URStack<DataType>& stack, ostream& out) {
     return stack.displayPrevious(out) << '\n' << endl;
 }
 
-ostream& displayNext(URStack& stack, ostream& out) {
+template<class DataType>
+ostream& displayNext(URStack<DataType>& stack, ostream& out) {
     return stack.displayNext(out) << '\n' << endl;
 }
 
-void displaySize(URStack& stack, ostream& out) {
+template<class DataType>
+void displaySize(URStack<DataType>& stack, ostream& out) {
     out << '\n';
     displayDataMessage(
             "Stack size is: " + to_string(stack.getSize()),
@@ -80,7 +87,7 @@ int main() {
 
     int selected_option;
     int options_num;
-    URStack stack = clear(cout, cin);
+    URStack<string> stack = clear(cout, cin);
 
     while (true) {
         options_num = displayMenu(cout);

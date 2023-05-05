@@ -7,8 +7,10 @@
 
 #include <string>
 #include <iostream>
+#include <utility>
 
 
+template<class DataType>
 class URStack {
 private:
     /*
@@ -16,13 +18,6 @@ private:
      */
     class Node {
     public:
-        /*
-         * Type alias for the type of data stored in the Nodes class.
-         * For the use case in MyStringBuilder, char is the type of the data.
-         * Can be accessed outside the class using Node::DataType.
-         */
-        typedef std::string DataType;
-
         /*
          * Pre-Conditions:
          *      No preconditions.
@@ -104,19 +99,6 @@ private:
         /*
          * Pre-Conditions:
          *      `this` Node instance is initialized.
-         *
-         * Post-Conditions:
-         *      A Node pointer to the next Node or nullptr is returned.
-         *      No changes to this.
-         *
-         * Returns a copy of the pointer to the next Node instance.
-         */
-        [[nodiscard]] Node* getPrev() const;
-
-
-        /*
-         * Pre-Conditions:
-         *      `this` Node instance is initialized.
          *      An int is given that represents the number of hops.
          *
          * Post-Conditions:
@@ -127,6 +109,8 @@ private:
          * after performing the given number of hops.
          */
         [[nodiscard]] Node* skip(int);
+
+        [[nodiscard]] Node* before(Node*);
 
         /*
          * Pre-Conditions:
@@ -154,18 +138,14 @@ private:
          * Assigns the given pointer to next.
          */
         void chain(Node*);
+
+        void cut(int);
     private:
         /*
          * Pointer to the next Node.
          * Initialized to nullptr by default.
          */
         Node *next;
-
-        /*
-         * Pointer to the previous Node.
-         * Initialized to nullptr by default.
-         */
-        Node *prev;
 
         /*
          * Data stored in the Node instance.
@@ -206,14 +186,20 @@ private:
      */
     int size;
 
-    [[nodiscard]] std::ostream& displayDirectionalFrom(
+    std::ostream& displayDirectional(
+            NodePtr,
             NodePtr,
             std::ostream&,
-            bool to_right) const;
+            bool) const;
 
     [[nodiscard]] inline bool isEmpty() const {
         return not size;
     }
+
+    [[nodiscard]] inline bool hasNext() const {
+        return top != current or isEmpty();
+    }
+
 public:
     explicit URStack(int capacity = 20);
 
@@ -225,6 +211,5 @@ public:
     [[nodiscard]] std::ostream& displayNext(std::ostream&) const;
     [[nodiscard]] int getSize() const;
 };
-
 
 #endif //URSTACK_URSTACK_H

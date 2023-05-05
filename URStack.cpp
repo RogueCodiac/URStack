@@ -2,9 +2,9 @@
  * StringBuilder Project
  *
  *
- * *.cpp
+ * URStack.cpp
  *
- * Date:        13/04/2023
+ * Date:        04/05/2023
  *
  * Author:      Mahmoud Yaman Seraj Alddin
  *
@@ -45,12 +45,8 @@
  */
 
 
-#include "URStack.h"
 #include "CustomIO.h"
-
-#include <utility>
-#include <iostream>
-#include <exception>
+#include "URStack.h"
 
 using std::string, std::ostream,
         std::min, std::max, std::invalid_argument;
@@ -66,7 +62,8 @@ using std::string, std::ostream,
  *
  * No-arg constructor of the Node class.
  */
-URStack::Node::Node(): data{}, next{nullptr}, prev{nullptr} {}
+template<class DataType>
+URStack<DataType>::Node::Node(): data{}, next{nullptr} {}
 
 /*
  * Pre-Conditions:
@@ -81,8 +78,9 @@ URStack::Node::Node(): data{}, next{nullptr}, prev{nullptr} {}
  * Parameterized constructor of the Node class,
  * that takes the data to be stored.
  */
-URStack::Node::Node(DataType data): data{std::move(data)},
-                                    next{nullptr}, prev{nullptr} {}
+template<class DataType>
+URStack<DataType>::Node::Node(DataType data): data{data},
+                                    next{nullptr} {}
 
 /*
  * Pre-Conditions:
@@ -100,7 +98,8 @@ URStack::Node::Node(DataType data): data{std::move(data)},
  * If the pointer to other is the same as this, no copying is performed,
  * prevents self assignment & needles copying.
  */
-URStack::Node& URStack::Node::operator=(const Node& other) {
+template<class DataType>
+typename URStack<DataType>::Node& URStack<DataType>::Node::operator=(const Node& other) {
     /* Self-assignment test */
     if (this == &other) {
         return *this;
@@ -108,7 +107,6 @@ URStack::Node& URStack::Node::operator=(const Node& other) {
 
     data = other.data;
     next = other.next;
-    prev = other.prev;
 
     return *this;
 }
@@ -124,19 +122,13 @@ URStack::Node& URStack::Node::operator=(const Node& other) {
  * Destructor for the Node class.
  * Deletes all the following Node instances, till it reaches a nullptr.
  */
-URStack::Node::~Node() {
-    if (prev) {
-        prev->chain(nullptr);
-    }
-
+template<class DataType>
+URStack<DataType>::Node::~Node() {
     /* Deleting nullptr has no effect */
     delete next;
 
     /* Provides protection against illegal access */
     next = nullptr;
-
-    /* Provides protection against illegal access */
-    prev = nullptr;
 }
 
 /*
@@ -151,7 +143,8 @@ URStack::Node::~Node() {
  * wasteful calls. For example `node.getNext();`.
  * Returns a copy of the pointer to the next Node instance.
  */
-URStack::NodePtr URStack::Node::getNext() const {
+template<class DataType>
+typename URStack<DataType>::NodePtr URStack<DataType>::Node::getNext() const {
     return next;
 }
 
@@ -167,24 +160,9 @@ URStack::NodePtr URStack::Node::getNext() const {
  * wasteful calls. For example `node.getData();`.
  * Returns a copy of the data stored in the Node instance.
  */
-URStack::Node::DataType URStack::Node::getData() const {
+template<class DataType>
+DataType URStack<DataType>::Node::getData() const {
     return data;
-}
-
-/*
- * Pre-Conditions:
- *      `this` Node instance is initialized.
- *
- * Post-Conditions:
- *      A Node pointer to the next Node or nullptr is returned.
- *      No changes to this.
- *
- * Marked [[nodiscard]] to allow the compiler to issue warnings in case of
- * wasteful calls. For example `node.getNext();`.
- * Returns a copy of the pointer to the next Node instance.
- */
-URStack::NodePtr URStack::Node::getPrev() const {
-    return prev;
 }
 
 /*
@@ -203,21 +181,24 @@ URStack::NodePtr URStack::Node::getPrev() const {
  * Returns a pointer to a Node,
  * after performing the given number of hops.
  */
-URStack::NodePtr URStack::Node::skip(int n) {
+template<class DataType>
+typename URStack<DataType>::NodePtr URStack<DataType>::Node::skip(int n) {
     Node *result = this;
 
-    if (n < 0) {
-        n *= -1;
+    /* Perform n-hops */
+    while (result and 0 < n--) {
+        result = result->getNext();
+    }
 
-        /* Perform n-hops */
-        while (result and 0 < n--) {
-            result = result->getPrev();
-        }
-    } else {
-        /* Perform n-hops */
-        while (result and 0 < n--) {
-            result = result->getNext();
-        }
+    return result;
+}
+
+template<class DataType>
+typename URStack<DataType>::NodePtr URStack<DataType>::Node::before(NodePtr node) {
+    Node *result = this;
+
+    while (result and result->getNext() != node) {
+        result = result->getNext();
     }
 
     return result;
@@ -236,15 +217,13 @@ URStack::NodePtr URStack::Node::skip(int n) {
  * Deletes a given number of Node instances following a Node instance.
  * Returns a pointer to the new next Node instance.
  */
-void URStack::Node::unchain(Node *chain_end) {
+template<class DataType>
+void URStack<DataType>::Node::unchain(Node *chain_end) {
     if (this == chain_end) {
         return;
     }
 
-    if (chain_end) {
-        chain_end->getPrev()->chain(nullptr);
-        chain_end->prev = nullptr;
-    }
+    before(chain_end)->chain(nullptr);
 
     delete this;
 }
@@ -259,23 +238,28 @@ void URStack::Node::unchain(Node *chain_end) {
  *
  * Assigns the given pointer to next.
  */
-void URStack::Node::chain(Node *newNext) {
+template<class DataType>
+void URStack<DataType>::Node::chain(Node *newNext) {
     next = newNext;
-
-    if (newNext) {
-        newNext->prev = this;
-    }
 }
 
-URStack::URStack(int capacity): size{0}, top{nullptr}, current{nullptr} {
+template<class DataType>
+void URStack<DataType>::Node::cut(int after_distance) {
+    NodePtr before_last = skip(after_distance - 1);
+    delete before_last->getNext();
+    before_last->chain(nullptr);
+}
+
+template<class DataType>
+URStack<DataType>::URStack(int capacity): size{0}, top{nullptr},
+current{nullptr}, capacity{capacity} {
     if (capacity <= 0) {
         throw invalid_argument("\nCapacity must be a positive integer.\n");
     }
-
-    this->capacity = capacity;
 }
 
-void URStack::insertNewAction(const string& action) {
+template<class DataType>
+void URStack<DataType>::insertNewAction(const string& action) {
     auto new_action = new Node{action};
 
     if (isEmpty()) {
@@ -296,18 +280,19 @@ void URStack::insertNewAction(const string& action) {
     top = current = new_action;
 
     if (size == capacity) {
-        delete current->skip(size);
+        current->cut(size);
     } else {
         size++;
     }
 }
 
-void URStack::undo(ostream& out) {
+template<class DataType>
+void URStack<DataType>::undo(ostream& out) {
     if (not isEmpty()) {
         displayDataMessage("Undoing: " + current->getData(), out);
 
         if (size != 1) {
-            current = current->skip(1);
+            current = current->getNext();
         }
 
         size--;
@@ -316,10 +301,11 @@ void URStack::undo(ostream& out) {
     }
 }
 
-void URStack::redo(std::ostream &out) {
-    if (top and (current->getPrev() or isEmpty())) {
+template<class DataType>
+void URStack<DataType>::redo(std::ostream &out) {
+    if (hasNext()) {
         if (not isEmpty()) {
-            current = current->skip(-1);
+            current = top->before(current);
         }
 
         displayDataMessage("Redoing: " + current->getData(), out);
@@ -329,49 +315,58 @@ void URStack::redo(std::ostream &out) {
     }
 }
 
-ostream& URStack::displayDirectionalFrom(
+template<class DataType>
+ostream& URStack<DataType>::displayDirectional(
         NodePtr from,
+        NodePtr to,
         std::ostream& out,
-        bool to_right) const {
-    if (not (to_right or isEmpty())) {
-        from = from->skip(-1);
+        bool reverse) const {
+    static const string& k_sep = ", ";
+
+    if (not from or (from == to and not isEmpty())) {
+        return out;
     }
 
-    displayDataMessage(from->getData(), out);
-    from = to_right ? from->getNext() : from->getPrev();
+    if (reverse) {
+        displayDirectional(from->getNext(), to, out, reverse);
+        return displayDataMessage(from->getData() + (from != top ? k_sep : ""), out);
+    } else {
+        displayDataMessage(
+                from->getData() + (from->getNext() ? k_sep : ""),out
+        );
 
-    while (from) {
-        displayDataMessage(", " + from->getData(), out);
-        from = to_right ? from->getNext() : from->getPrev();
+        return displayDirectional(from->getNext(), to, out, reverse);
     }
-
-    return out;
 }
 
-ostream& URStack::displayAll(std::ostream& out) const {
+template<class DataType>
+ostream& URStack<DataType>::displayAll(std::ostream& out) const {
     if (not top) {
         return displayInvalidMessage("No actions", out);
     }
 
-    return displayDirectionalFrom(top, out, true);
+    return displayDirectional(top, nullptr, out, false);
 }
 
-ostream& URStack::displayPrevious(std::ostream& out) const {
-    if (not current or isEmpty()) {
+template<class DataType>
+ostream& URStack<DataType>::displayPrevious(std::ostream& out) const {
+    if (isEmpty()) {
         return displayDataMessage("No previous actions", out);
     }
 
-    return displayDirectionalFrom(current, out, true);
+    return displayDirectional(current, nullptr, out, false);
 }
 
-ostream& URStack::displayNext(std::ostream& out) const {
-    if (not current or not (current->getPrev() or isEmpty())) {
+template<class DataType>
+ostream& URStack<DataType>::displayNext(std::ostream& out) const {
+    if (not hasNext()) {
         return displayDataMessage("No next actions", out);
     }
 
-    return displayDirectionalFrom(current, out, false);
+    return displayDirectional(top, current, out, true);
 }
 
-int URStack::getSize() const {
+template<class DataType>
+int URStack<DataType>::getSize() const {
     return size;
 }
