@@ -1,7 +1,14 @@
-#include "URStack.cpp"
-#include "CommonIO.h"
+/*
+ * TODO Add list of functions,
+ * TODO organize the using statement,
+ */
+
 #include <iostream>
 #include <vector>
+
+#include "URStack.cpp"
+#include "CommonIO.h"
+
 
 using namespace std;
 
