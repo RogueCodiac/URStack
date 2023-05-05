@@ -42,6 +42,28 @@ ostream& displaySeparator(ostream& out) {
  *      const string reference to the prompt.
  *      ostream reference (optional), default is cout.
  *      istream reference (optional), default is cin.
+ *
+ * Post-Conditions:
+ *      Returns user string input.
+ *
+ * Displays the given prompt, takes string input from the user.
+ */
+void get(const std::string& prompt, std::ostream& out,
+         std::istream& in, std::string& result) {
+    out << prompt
+    << ": "
+    << "\033[36;1;1m";   /* Text becomes cyan, bold */
+
+    getline(in, result);
+
+    out << "\033[0m";  /* Text becomes normal */
+}
+
+/*
+ * Pre-Conditions:
+ *      const string reference to the prompt.
+ *      ostream reference (optional), default is cout.
+ *      istream reference (optional), default is cin.
  *      int minimum input value. Default disables bound.
  *      int maximum input value. Default disables bound.
  *      int default input value. Default disables default.
@@ -99,4 +121,21 @@ int getInt(const string& prompt, ostream& out, istream& in,
             << '\n' << endl;
         }
     }
+}
+
+/*
+ * Pre-Conditions:
+ *      const reference to a message to be displayed.
+ *      ostream reference (optional), default is cout.
+ *
+ * Post-Conditions:
+ *      Displays an information message.
+ *
+ * Displays an information message.
+ */
+std::ostream& displayDataMessage(const string& msg, std::ostream& out) {
+    return
+            out << "\033[36;1;1m"   /* Text becomes cyan, bold */
+                << msg
+                << "\033[0m";        /* Text becomes normal */
 }
