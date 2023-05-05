@@ -230,15 +230,18 @@ ostream& displayNext(URStack<T>& stack, ostream& out) {
  *      ostream reference to display a prompt.
  *
  * Post-Conditions:
- *      Displays the current size of the given URStack
+ *      Displays information about the given URStack.
  *
- * Handles all the necessary output to display the current size of
- * the URStack using the getSize() function.
+ * Handles all the necessary output to display the current size & capacity
+ * of the URStack.
  */
 template<class T>
-void displaySize(URStack<T>& stack, ostream& out) {
+void displayStackInfo(URStack<T>& stack, ostream& out) {
+    out << '\n';
+
     displayDataMessage(
-            "Stack size:\t" + to_string(stack.getSize()),
+            "Stack size:\t" + to_string(stack.getSize())
+                            + " / " + to_string(stack.getCapacity()),
             out) << '\n';
 }
 
@@ -261,7 +264,7 @@ int main() {
 
     /* Process user input till exit is triggered */
     while (true) {
-        displaySize(stack, cout);
+        displayStackInfo(stack, cout);
         options_num = displayMenu(cout);
 
         /* Get selected option */

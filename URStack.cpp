@@ -364,8 +364,3 @@ ostream& URStack<DataType>::displayNext(std::ostream& out) const {
 
     return displayDirectional(top, current, out, true);
 }
-
-template<class DataType>
-int URStack<DataType>::getSize() const {
-    return size;
-}

@@ -198,7 +198,7 @@ private:
     }
 
     [[nodiscard]] inline bool hasNext() const {
-        return top != current or isEmpty();
+        return top and (top != current or isEmpty());
     }
 
 public:
@@ -210,7 +210,14 @@ public:
     [[nodiscard]] std::ostream& displayAll(std::ostream&) const;
     [[nodiscard]] std::ostream& displayPrevious(std::ostream&) const;
     [[nodiscard]] std::ostream& displayNext(std::ostream&) const;
-    [[nodiscard]] int getSize() const;
+
+    [[nodiscard]] inline int getSize() const {
+        return size;
+    };
+
+    [[nodiscard]] inline int getCapacity() const {
+        return capacity;
+    };
 };
 
 #endif //URSTACK_URSTACK_H
