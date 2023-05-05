@@ -1,9 +1,15 @@
 #include "URStack.cpp"
-#include "CustomIO.h"
+#include "CommonIO.h"
 #include <iostream>
 #include <vector>
 
 using namespace std;
+
+template<class T>
+void readTo(const string& prompt, ostream& out, istream& in, T& result) {
+
+}
+
 
 template<class T>
 void clear(ostream& out, istream& in, URStack<T>& result) {
@@ -41,8 +47,8 @@ int displayMenu(ostream& out) {
 
 template<class T>
 void insertNewAction(URStack<T>& stack, istream& in, ostream& out) {
-    T new_action;
-    get("Enter a new action", out, in, new_action);
+    string new_action;
+    new_action = getString("Enter a new action", out, in);
     stack.insertNewAction(new_action);
     out << endl;
 }
