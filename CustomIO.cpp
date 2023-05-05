@@ -65,9 +65,8 @@ ostream& displaySeparator(ostream& out) {
  *
  * Displays the given prompt, takes string input from the user.
  */
-string get(const string& prompt, ostream& out, istream& in) {
-    string result;
-
+template<class T>
+void get(const string& prompt, ostream& out, istream& in, T& result) {
     out << prompt
         << ": "
         << "\033[36;1;1m";   /* Text becomes cyan, bold */
@@ -75,8 +74,6 @@ string get(const string& prompt, ostream& out, istream& in) {
     getline(in, result);
 
     out << "\033[0m";  /* Text becomes normal */
-
-    return result;
 }
 
 /*
@@ -102,11 +99,11 @@ int getInt(const string& prompt, ostream& out, istream& in,
     while (true) {
         try {
             if (default_val < 0) {
-                response = get(prompt, out, in);
+                get(prompt, out, in, response);
             } else {
-                response = get(prompt
-                               + " (Default is " + to_string(default_val) + ")",
-                               out, in);
+                get(prompt
+                + " (Default is " + to_string(default_val) + ")",
+                out, in, response);
             }
 
             /* No input */

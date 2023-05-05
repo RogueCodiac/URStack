@@ -15,7 +15,8 @@ std::ostream& displayDataMessage(const std::string&, std::ostream&);
 
 std::ostream& displaySeparator(std::ostream&);
 
-std::string get(const std::string&, std::ostream&, std::istream&);
+template<class T>
+void get(const std::string&, std::ostream&, std::istream&, T&);
 
 int getInt(const std::string&, std::ostream&, std::istream&,
            int lower = -1,

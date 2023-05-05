@@ -5,13 +5,14 @@
 
 using namespace std;
 
-URStack<string> clear(ostream& out, istream& in) {
+template<class T>
+void clear(ostream& out, istream& in, URStack<T>& result) {
     int new_capacity = getInt("Enter Stack capacity", out,
                               in, 1);
 
     out << endl;
 
-    return new_capacity < 0 ? URStack<string>() : URStack<string>(new_capacity);
+    result = new_capacity < 0 ? URStack<T>() : URStack<T>(new_capacity);
 }
 
 int displayMenu(ostream& out) {
@@ -38,44 +39,45 @@ int displayMenu(ostream& out) {
     return (int) options.size();
 }
 
-template<class DataType>
-void insertNewAction(URStack<DataType>& stack, istream& in, ostream& out) {
-    string new_action = get("Enter a new action", out, in);
+template<class T>
+void insertNewAction(URStack<T>& stack, istream& in, ostream& out) {
+    T new_action;
+    get("Enter a new action", out, in, new_action);
     stack.insertNewAction(new_action);
     out << endl;
 }
 
-template<class DataType>
-void undo(URStack<DataType>& stack, ostream& out) {
+template<class T>
+void undo(URStack<T>& stack, ostream& out) {
     out << '\n';
     stack.undo(out);
     out << '\n' << endl;
 }
 
-template<class DataType>
-void redo(URStack<DataType>& stack, ostream& out) {
+template<class T>
+void redo(URStack<T>& stack, ostream& out) {
     out << '\n';
     stack.redo(out);
     out << '\n' << endl;
 }
 
-template<class DataType>
-ostream& displayAll(URStack<DataType>& stack, ostream& out) {
+template<class T>
+ostream& displayAll(URStack<T>& stack, ostream& out) {
     return stack.displayAll(out) << '\n' << endl;
 }
 
-template<class DataType>
-ostream& displayPrevious(URStack<DataType>& stack, ostream& out) {
+template<class T>
+ostream& displayPrevious(URStack<T>& stack, ostream& out) {
     return stack.displayPrevious(out) << '\n' << endl;
 }
 
-template<class DataType>
-ostream& displayNext(URStack<DataType>& stack, ostream& out) {
+template<class T>
+ostream& displayNext(URStack<T>& stack, ostream& out) {
     return stack.displayNext(out) << '\n' << endl;
 }
 
-template<class DataType>
-void displaySize(URStack<DataType>& stack, ostream& out) {
+template<class T>
+void displaySize(URStack<T>& stack, ostream& out) {
     out << '\n';
     displayDataMessage(
             "Stack size is: " + to_string(stack.getSize()),
@@ -87,7 +89,9 @@ int main() {
 
     int selected_option;
     int options_num;
-    URStack<string> stack = clear(cout, cin);
+    URStack<string> stack;
+
+    clear(cout, cin, stack);
 
     while (true) {
         options_num = displayMenu(cout);
@@ -115,7 +119,7 @@ int main() {
                 displayNext(stack, cout);
                 break;
             case 7:
-                stack = clear(cout, cin);
+                clear(cout, cin, stack);
                 break;
             case 8:
                 displaySize(stack, cout);

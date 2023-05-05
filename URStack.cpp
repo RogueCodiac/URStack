@@ -259,7 +259,7 @@ current{nullptr}, capacity{capacity} {
 }
 
 template<class DataType>
-void URStack<DataType>::insertNewAction(const string& action) {
+void URStack<DataType>::insertNewAction(const DataType& action) {
     auto new_action = new Node{action};
 
     if (isEmpty()) {
