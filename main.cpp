@@ -5,12 +5,38 @@
 
 using namespace std;
 
+/*
+ * Pre-Conditions:
+ *      const string reference to the prompt.
+ *      ostream reference to display the prompt.
+ *      istream reference read user input.
+ *      Reference to a type T that has operator>>(istream&, T&) defined, or
+ *      a reference to a string.
+ *
+ * Post-Conditions:
+ *      Reads user input into the given variable reference of type T.
+ *
+ * Displays the given prompt, takes string input from the user.
+ *
+ * This method of coloring text is not supported by Windows 10 cmd;
+ * use a terminal simulator.
+ */
 template<class T>
-void readTo(const string& prompt, ostream& out, istream& in, T& result) {
+void get(const string& prompt, ostream& out,
+         istream& in, T& result) {
+    out << prompt
+        << ":\n\n"
+        << "\033[36;1;1m";   /* Text becomes cyan, bold */
 
+    in >> result;
+
+    out << "\033[0m";  /* Text becomes normal */
 }
 
-
+/*
+ * Pre-Conditions:
+ *
+ */
 template<class T>
 void clear(ostream& out, istream& in, URStack<T>& result) {
     int new_capacity = getInt("Enter Stack capacity", out,
@@ -47,8 +73,14 @@ int displayMenu(ostream& out) {
 
 template<class T>
 void insertNewAction(URStack<T>& stack, istream& in, ostream& out) {
-    string new_action;
-    new_action = getString("Enter a new action", out, in);
+    T new_action;
+
+    if (is_same_v<T, string>) {
+        new_action = getString("Enter a new action", out, in);
+    } else {
+        get("Enter a new action", out, in, new_action);
+    }
+
     stack.insertNewAction(new_action);
     out << endl;
 }
