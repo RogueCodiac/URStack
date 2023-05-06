@@ -1,6 +1,5 @@
 /*
  * TODO Add list of functions,
- * TODO organize the using statement,
  */
 
 #include <iostream>
@@ -33,7 +32,8 @@ void get(const string& prompt, ostream& out,
          istream& in, T& result) {
     out << prompt
         << ": "
-        << "\033[36;1;1m";   /* Text becomes cyan, bold */
+        << "\033[36;1;1m"   /* Text becomes cyan, bold */
+        << endl;
 
     in >> result;
 
@@ -292,7 +292,7 @@ int main() {
 
     int selected_option;
     int options_num;
-    URStack<int> stack;
+    URStack<string> stack;
 
     /* Create a new stack with a size given by the user */
     clear(stack, cout, cin);
