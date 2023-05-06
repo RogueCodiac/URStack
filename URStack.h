@@ -226,7 +226,7 @@ public:
 
 private:
     /*
-     * Node class used in MyStringBuilder class to manage single characters.
+     * Node class used in URStack to manage actions
      */
     class Node {
     public:
