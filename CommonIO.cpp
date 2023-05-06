@@ -136,6 +136,9 @@ int getInt(const string& prompt, ostream& out, istream& in,
            int lower, int upper, int default_val) {
     string response;
 
+    /* Insure istream is blank */
+    in.clear();
+
     /* Take input until user gives a valid value */
     while (true) {
         try {

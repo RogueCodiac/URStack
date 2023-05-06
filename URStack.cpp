@@ -50,6 +50,14 @@
 using std::string, std::ostream,
         std::min, std::max, std::invalid_argument;
 
+
+template<class T>
+ostream& display(const T& val, ostream& out) {
+    return out << "\033[36;1;1m"   /* Text becomes cyan, bold */
+               << val
+               << "\033[0m";        /* Text becomes normal */
+}
+
 /*
  * Pre-Conditions:
  *      No preconditions.
@@ -288,7 +296,8 @@ void URStack<DataType>::insertNewAction(const DataType& action) {
 template<class DataType>
 void URStack<DataType>::undo(ostream& out) {
     if (not isEmpty()) {
-        displayDataMessage("Undoing: " + current->getData(), out);
+        display("Undoing: ", out);
+        display(current->getData(), out);
 
         if (size != 1) {
             current = current->getNext();
@@ -307,7 +316,8 @@ void URStack<DataType>::redo(std::ostream &out) {
             current = top->before(current);
         }
 
-        displayDataMessage("Redoing: " + current->getData(), out);
+        display("Redoing: ", out);
+        display(current->getData(), out);
         size++;
     } else {
         displayInvalidMessage("No previous actions\a", out);
@@ -328,14 +338,22 @@ ostream& URStack<DataType>::displayDirectional(
 
     if (reverse) {
         displayDirectional(from->getNext(), to, out, reverse);
-        return displayDataMessage(from->getData() + (from != top ? k_sep : ""), out);
+        display(from->getData(), out);
+
+        if (from != top) {
+            display(k_sep, out);
+        }
     } else {
-        displayDataMessage(
-                from->getData() + (from->getNext() ? k_sep : ""),out
-        );
+        display(from->getData(),out);
+
+        if (from->getNext()) {
+            display(k_sep, out);
+        }
 
         return displayDirectional(from->getNext(), to, out, reverse);
     }
+
+    return out;
 }
 
 template<class DataType>
@@ -350,7 +368,7 @@ ostream& URStack<DataType>::displayAll(std::ostream& out) const {
 template<class DataType>
 ostream& URStack<DataType>::displayPrevious(std::ostream& out) const {
     if (isEmpty()) {
-        return displayDataMessage("No previous actions", out);
+        return display("No previous actions", out);
     }
 
     return displayDirectional(current, nullptr, out, false);
@@ -359,7 +377,7 @@ ostream& URStack<DataType>::displayPrevious(std::ostream& out) const {
 template<class DataType>
 ostream& URStack<DataType>::displayNext(std::ostream& out) const {
     if (not hasNext()) {
-        return displayDataMessage("No next actions", out);
+        return display("No next actions", out);
     }
 
     return displayDirectional(top, current, out, true);

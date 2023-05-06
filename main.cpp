@@ -32,10 +32,13 @@ template<class T>
 void get(const string& prompt, ostream& out,
          istream& in, T& result) {
     out << prompt
-        << ":\n\n"
+        << ": "
         << "\033[36;1;1m";   /* Text becomes cyan, bold */
 
     in >> result;
+
+    /* Ignore all unused input */
+    in.ignore(LLONG_MAX, '\n');
 
     out << "\033[0m";  /* Text becomes normal */
 }
@@ -112,19 +115,37 @@ int displayMenu(ostream& out) {
  *
  * Handles all the necessary input and output to
  * insert a new action to the URStack using its insertNewAction function.
- * If T is string, the whole line of input is taken.
+ * If T is string, a variant of the function is called.
  */
 template<class T>
 void insertNewAction(URStack<T>& stack, ostream& out, istream& in) {
     T new_action;
 
-    if (is_same_v<T, string>) {
-        /* T is string, take whole line as input */
-        new_action = getString("Enter a new action", out, in);
-    } else {
-        /* T is not string, use its operator>> */
-        get("Enter a new action", out, in, new_action);
-    }
+    /* use operator>> defined in T */
+    get("Enter a new action", out, in, new_action);
+
+    stack.insertNewAction(new_action);
+
+    /* Display new line, flush buffer */
+    out << endl;
+}
+
+/*
+ * Pre-Conditions:
+ *      Reference to the URStack<string> in use by the program.
+ *      ostream reference to display a prompt.
+ *      istream reference read user input.
+ *
+ * Post-Conditions:
+ *      An action of type string is created using user input & inserted
+ *      to the given URStack.
+ *
+ * Handles all the necessary input and output to
+ * insert a new action to the URStack using its insertNewAction function.
+ * Takes the whole line as input for the action string.
+ */
+void insertNewAction(URStack<string>& stack, ostream& out, istream& in) {
+    string new_action = getString("Enter a new action", out, in);
 
     stack.insertNewAction(new_action);
 
@@ -239,16 +260,23 @@ ostream& displayNext(URStack<T>& stack, ostream& out) {
  * Post-Conditions:
  *      Displays information about the given URStack.
  *
- * Handles all the necessary output to display the current size & capacity
- * of the URStack.
+ * Handles all the necessary output to display the current size, capacity, &
+ * whether the type stored in the URStack is string or not.
  */
 template<class T>
 void displayStackInfo(URStack<T>& stack, ostream& out) {
     out << '\n';
 
+    /* Displays {size} / {capacity} */
     displayDataMessage(
             "Stack size:\t" + to_string(stack.getSize())
                             + " / " + to_string(stack.getCapacity()),
+            out) << '\n';
+
+    displayDataMessage("Datatype:\t", out);
+
+    /* Displays String or Custom based on the type of T */
+    displayDataMessage(is_same_v<T, string> ? "String" : "Custom",
             out) << '\n';
 }
 
@@ -264,7 +292,7 @@ int main() {
 
     int selected_option;
     int options_num;
-    URStack<string> stack;
+    URStack<int> stack;
 
     /* Create a new stack with a size given by the user */
     clear(stack, cout, cin);
