@@ -325,50 +325,52 @@ void displayStackInfo(URStack<T>& stack, ostream& out) {
  *      Program startup.
  */
 int main() {
-    displaySeparator(cout);
-
     int selected_option;
     int options_num;
+    ostream& out = cout;
+    istream& in = cin;
     URStack<string> stack;
 
+    displaySeparator(out);
+
     /* Create a new stack with a size given by the user */
-    clear(stack, cout, cin);
+    clear(stack, out, in);
 
     /* Process user input till exit is triggered */
     while (true) {
-        displayStackInfo(stack, cout);
-        options_num = displayMenu(cout);
+        displayStackInfo(stack, out);
+        options_num = displayMenu(out);
 
         /* Get selected option */
-        selected_option = getInt("Choose an option", cout, cin,
+        selected_option = getInt("Choose an option", out, in,
                                  1, options_num);
 
         switch (selected_option) {
             case 1:
-                insertNewAction(stack, cout, cin);
+                insertNewAction(stack, out, in);
                 break;
             case 2:
-                undo(stack, cout);
+                undo(stack, out);
                 break;
             case 3:
-                redo(stack, cout);
+                redo(stack, out);
                 break;
             case 4:
-                displayAll(stack, cout);
+                displayAll(stack, out);
                 break;
             case 5:
-                displayPrevious(stack, cout);
+                displayPrevious(stack, out);
                 break;
             case 6:
-                displayNext(stack, cout);
+                displayNext(stack, out);
                 break;
             case 7:
-                clear(stack, cout, cin);
+                clear(stack, out, in);
                 break;
             case 8:
                 return 0;
             default:
-                displayInvalidMessage("Invalid option!", cout)
+                displayInvalidMessage("Invalid option!", out)
                 << '\n' << endl;
         }
     }
