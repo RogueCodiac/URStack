@@ -139,6 +139,8 @@ URStack<DataType>::Node::~Node() {
 
     /* Provides protection against illegal access */
     next = nullptr;
+
+    /* Data released automatically */
 }
 
 /*
