@@ -18,9 +18,6 @@
  *      Node(const DataType&)
  *          Parameterized constructor of the Node class.
  *
- *      Node& operator=(const Node&)
- *          Assignment operator for the Node class.
- *
  *      ~Node()
  *          Destructor for the Node class.
  *
@@ -105,6 +102,128 @@
  */
 template<class DataType>
 class URStack {
+public:
+    /*
+     * Pre-Conditions:
+     *      Capacity of the URStack (optional, default 20).
+     *
+     * Post-Conditions:
+     *      URStack instance is created.
+     *      current is nullptr.
+     *      top is nullptr.
+     *      size is 0.
+     *      capacity is given.
+     *
+     * Parameterized/Default constructor of the URStack class.
+     */
+    explicit URStack(int capacity = 20);
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      const reference to action to be added.
+     *
+     * Post-Conditions:
+     *      New action is added,
+     *      necessary adjustments are made according to the requirements.
+     *
+     * Inserts a new action on top of the stack.
+     */
+    void insertNewAction(const DataType&);
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output (requirement).
+     *
+     * Post-Conditions:
+     *      Display the data of the latest action to the given ostream,
+     *      then undo it (if possible).
+     *
+     * Undo the latest action in the stack.
+     */
+    void undo(std::ostream&);
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output (requirement).
+     *
+     * Post-Conditions:
+     *      Redo the latest deleted action,
+     *      then display its data to the given ostream (if possible).
+     *
+     * Redo the latest undone action in the stack.
+     */
+    void redo(std::ostream&);
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output.
+     *
+     * Post-Conditions:
+     *      Displays all actions in the stack to the given ostream.
+     *      Returns reference to the ostream.
+     *
+     * Displays all actions in the stack.
+     */
+    [[nodiscard]] std::ostream& displayAll(std::ostream&) const;
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output.
+     *
+     * Post-Conditions:
+     *      Displays all currently existing actions in the stack
+     *      to the given ostream.
+     *      Returns reference to the ostream.
+     *
+     * Displays all existing actions in the stack.
+     */
+    [[nodiscard]] std::ostream& displayPrevious(std::ostream&) const;
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output.
+     *
+     * Post-Conditions:
+     *      Displays all previously deleted actions in the stack
+     *      to the given ostream.
+     *      Returns reference to the ostream.
+     *
+     * Displays all deleted actions in the stack.
+     */
+    [[nodiscard]] std::ostream& displayNext(std::ostream&) const;
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *
+     * Post-Conditions:
+     *      Number of actions in the stack is returned.
+     *
+     * Returns the number of actions in the stack.
+     */
+    [[nodiscard]] inline int getSize() const {
+        return size;
+    };
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *
+     * Post-Conditions:
+     *      Capacity of the stack is returned.
+     *
+     * Returns the capacity of the stack.
+     */
+    [[nodiscard]] inline int getCapacity() const {
+        return capacity;
+    };
+
 private:
     /*
      * Node class used in MyStringBuilder class to manage single characters.
@@ -137,21 +256,6 @@ private:
          * that takes the data to be stored.
          */
         explicit Node(DataType);
-
-        /*
-         * Pre-Conditions:
-         *      `this` Node instance & the given Node instance are initialized.
-         *      A const Reference to a Node instance is given from which to copy.
-         *
-         * Post-Conditions:
-         *      data is a copy of the given Node's data.
-         *      next is a copy of the given Node's next.
-         *      Returns a reference to this.
-         *
-         * Assignment operator for the Node class that copies the data fields of
-         * the given Node to this.
-         */
-        Node& operator=(const Node&);
 
         /*
          * Pre-Conditions:
@@ -347,128 +451,6 @@ private:
     [[nodiscard]] inline bool hasNext() const {
         return top and (top != current or isEmpty());
     }
-
-public:
-    /*
-     * Pre-Conditions:
-     *      Capacity of the URStack (optional, default 20).
-     *
-     * Post-Conditions:
-     *      URStack instance is created.
-     *      current is nullptr.
-     *      top is nullptr.
-     *      size is 0.
-     *      capacity is given.
-     *
-     * Parameterized/Default constructor of the URStack class.
-     */
-    explicit URStack(int capacity = 20);
-
-    /*
-     * Pre-Conditions:
-     *      URStack is initialized.
-     *      const reference to action to be added.
-     *
-     * Post-Conditions:
-     *      New action is added,
-     *      necessary adjustments are made according to the requirements.
-     *
-     * Inserts a new action on top of the stack.
-     */
-    void insertNewAction(const DataType&);
-
-    /*
-     * Pre-Conditions:
-     *      URStack is initialized.
-     *      ostream reference to display the output (requirement).
-     *
-     * Post-Conditions:
-     *      Display the data of the latest action to the given ostream,
-     *      then undo it (if possible).
-     *
-     * Undo the latest action in the stack.
-     */
-    void undo(std::ostream&);
-
-    /*
-     * Pre-Conditions:
-     *      URStack is initialized.
-     *      ostream reference to display the output (requirement).
-     *
-     * Post-Conditions:
-     *      Redo the latest deleted action,
-     *      then display its data to the given ostream (if possible).
-     *
-     * Redo the latest undone action in the stack.
-     */
-    void redo(std::ostream&);
-
-    /*
-     * Pre-Conditions:
-     *      URStack is initialized.
-     *      ostream reference to display the output.
-     *
-     * Post-Conditions:
-     *      Displays all actions in the stack to the given ostream.
-     *      Returns reference to the ostream.
-     *
-     * Displays all actions in the stack.
-     */
-    [[nodiscard]] std::ostream& displayAll(std::ostream&) const;
-
-    /*
-     * Pre-Conditions:
-     *      URStack is initialized.
-     *      ostream reference to display the output.
-     *
-     * Post-Conditions:
-     *      Displays all currently existing actions in the stack
-     *      to the given ostream.
-     *      Returns reference to the ostream.
-     *
-     * Displays all existing actions in the stack.
-     */
-    [[nodiscard]] std::ostream& displayPrevious(std::ostream&) const;
-
-    /*
-     * Pre-Conditions:
-     *      URStack is initialized.
-     *      ostream reference to display the output.
-     *
-     * Post-Conditions:
-     *      Displays all previously deleted actions in the stack
-     *      to the given ostream.
-     *      Returns reference to the ostream.
-     *
-     * Displays all deleted actions in the stack.
-     */
-    [[nodiscard]] std::ostream& displayNext(std::ostream&) const;
-
-    /*
-     * Pre-Conditions:
-     *      URStack is initialized.
-     *
-     * Post-Conditions:
-     *      Number of actions in the stack is returned.
-     *
-     * Returns the number of actions in the stack.
-     */
-    [[nodiscard]] inline int getSize() const {
-        return size;
-    };
-
-    /*
-     * Pre-Conditions:
-     *      URStack is initialized.
-     *
-     * Post-Conditions:
-     *      Capacity of the stack is returned.
-     *
-     * Returns the capacity of the stack.
-     */
-    [[nodiscard]] inline int getCapacity() const {
-        return capacity;
-    };
 };
 
 #endif //URSTACK_URSTACK_H

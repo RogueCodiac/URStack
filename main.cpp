@@ -13,38 +13,6 @@ using namespace std;
 
 /*
  * Pre-Conditions:
- *      const string reference to a prompt.
- *      ostream reference to display a prompt.
- *      istream reference read user input.
- *      Reference to a type T that has operator>>(istream&, T&) defined, or
- *      a reference to a string.
- *
- * Post-Conditions:
- *      Reads user input into the given variable reference of type T.
- *
- * Displays the given prompt, takes string input from the user.
- *
- * This method of coloring text is not supported by Windows 10 cmd;
- * use a terminal simulator.
- */
-template<class T>
-void get(const string& prompt, ostream& out,
-         istream& in, T& result) {
-    out << prompt
-        << ": "
-        << "\033[36;1;1m"   /* Text becomes cyan, bold */
-        << endl;
-
-    in >> result;
-
-    /* Ignore all unused input */
-    in.ignore(LLONG_MAX, '\n');
-
-    out << "\033[0m";  /* Text becomes normal */
-}
-
-/*
- * Pre-Conditions:
  *      ostream reference to display a prompt.
  *      istream reference read user input.
  *      Reference to the URStack in use by the program.
