@@ -322,7 +322,7 @@ URStack<DataType>::URStack(int capacity): size{0}, top{nullptr},
 /*
  * Pre-Conditions:
  *      URStack is initialized.
- *      const reference to action to be added.
+ *      const reference for action to be added.
  *
  * Post-Conditions:
  *      If the stack is empty:
