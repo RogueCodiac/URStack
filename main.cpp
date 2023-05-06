@@ -91,7 +91,7 @@ int displayMenu(ostream& out) {
     /* Loop over all options */
     for (int i = 0; i < options.size(); i++) {
         displayDataMessage(to_string(i + 1) + '-', out)
-            << "\t\t"
+            << string(4, '\t')
             << options[i]
             << '\n';
     }
@@ -269,11 +269,11 @@ void displayStackInfo(URStack<T>& stack, ostream& out) {
 
     /* Displays {size} / {capacity} */
     displayDataMessage(
-            "Stack size:\t" + to_string(stack.getSize())
+            "Stack size:\t\t" + to_string(stack.getSize())
                             + " / " + to_string(stack.getCapacity()),
             out) << '\n';
 
-    displayDataMessage("Datatype:\t", out);
+    displayDataMessage("Datatype:\t\t", out);
 
     /* Displays String or Custom based on the type of T */
     displayDataMessage(is_same_v<T, string> ? "String" : "Custom",

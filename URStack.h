@@ -1,6 +1,56 @@
-//
-// Created by Yaman SirajAldeen on 5/1/23.
-//
+/*
+ * URStack Project
+ *
+ *
+ * URStack.h
+ *
+ * Date:        02/05/2023
+ *
+ * Author:      Mahmoud Yaman Seraj Alddin
+ *
+ * Purpose:     Definition of the URStack function & its nested Node class.
+ *
+ * List of public Node class Functions:
+ *      Node()
+ *          No-arg constructor of the Node class.
+ *
+ *      Node(const DataType&)
+ *          Parameterized constructor of the Node class.
+ *
+ *      Node& operator=(const Node&)
+ *          Assignment operator for the Node class.
+ *
+ *      ~Node()
+ *          Destructor for the Node class.
+ *
+ *      Node* getNext() const
+ *          Returns the pointer to the next Node instance.
+ *
+ *      DataType getData() const
+ *          Returns the data stored in the Node instance.
+ *
+ *      void chain(Node*)
+ *          Assigns the next Node instance.
+ *
+ *      void setData(const DataType&)
+ *          Assigns the data field in the Node instance.
+ *
+ *      void unchain(Node*)
+ *          Deletes all nodes from this till (excluding) the given Node.
+ *
+ *      Node* skip(int)
+ *          Returns a pointer to a Node,
+ *          after performing a given number of hops.
+ *
+ *      Node* before(Node*)
+ *          Returns a Node pointer to the Node before the given Node.
+ *
+ *      void cut(int)
+ *          Deletes all Nodes after N-hops.
+ *
+ * List of public URStack class Functions:
+ *
+ */
 
 #ifndef URSTACK_URSTACK_H
 #define URSTACK_URSTACK_H
@@ -11,6 +61,10 @@
 
 #include "CommonIO.h"
 
+
+/*
+ * Stack with redo/undo functionality
+ */
 template<class DataType>
 class URStack {
 private:
@@ -34,7 +88,7 @@ private:
 
         /*
          * Pre-Conditions:
-         *      A const Reference to a variable of type `DataType` is given.
+         *      Data of `DataType` type is given.
          *
          * Post-Conditions:
          *      A Node instance with the given data is created.
@@ -67,6 +121,7 @@ private:
          *
          * Post-Conditions:
          *      `this` Node instance is destroyed.
+         *      All following nodes in the chain are destroyed.
          *      next is nullptr.
          *
          * Destructor for the Node class.
@@ -111,20 +166,31 @@ private:
          */
         [[nodiscard]] Node* skip(int);
 
+        /*
+         * Pre-Conditions:
+         *      `this` Node instance is initialized.
+         *      `this` Node instance is linked to the given Node
+         *      after N-hops.
+         *
+         * Post-Conditions:
+         *      The node before the given Node
+         *      (i.e. the one which has next pointing to it) is returned.
+         *
+         * Returns a Node pointer to the Node before the given Node.
+         */
         [[nodiscard]] Node* before(Node*);
 
         /*
          * Pre-Conditions:
          *      `this` Node instance is initialized.
-         *      An int is given that represents the number of Nodes to delete,
-         *      after this.
+         *      A pointer to a Node located N-hops after `this`.
          *
          * Post-Conditions:
-         *      All n-Nodes following `this` are deleted.
-         *      next points to the node after the last deleted node.
+         *      All n-Nodes from `this` are deleted.
+         *      In case the given pointer is equal to this,
+         *      nothing occurs.
          *
-         * Deletes a given number of Node instances following a Node instance.
-         * Returns a pointer to the new next Node instance.
+         * Deletes all nodes from this till (excluding) the given Node.
          */
         void unchain(Node*);
 
@@ -140,6 +206,16 @@ private:
          */
         void chain(Node*);
 
+        /*
+         * Pre-Conditions:
+         *      `this` is initialized.
+         *
+         * Post-Conditions:
+         *      All nodes after N-hops are deleted.
+         *      The Node (N-1) hops away points to nullptr.
+         *
+         * Deletes all Nodes after N-hops.
+         */
         void cut(int);
     private:
         /*
@@ -157,19 +233,19 @@ private:
 
     /*
      * Type alias for Node*.
-     * Can be accessed in the implementation using URStack::NodePtr.
+     * Can be accessed in the implementation file using URStack::NodePtr.
      */
     typedef Node* NodePtr;
 
     /*
      * Pointer to the top Node instance of the URStack instance.
-     * Default is nullptr
+     * Default is nullptr.
      */
     NodePtr top;
 
     /*
      * Pointer to the current Node instance of the URStack instance.
-     * Default is a NodePtr with an empty string.
+     * Default is nullptr.
      */
     NodePtr current;
 
@@ -187,34 +263,171 @@ private:
      */
     int size;
 
+    /*
+     * Pre-Conditions:
+     *      URStack<DataType> is initialized.
+     *      ostream to display the output.
+     *      The stack is not empty.
+     *      Current must have a Node before it, if reverse is true.
+     *      The given from pointer is before to.
+     *      reverse, true displays the Nodes' data in reverse.
+     *      DataType must have an operator<< implementation.
+     *
+     * Post-Conditions:
+     *      The data in the Nodes is displayed into the given ostream&
+     *
+     * Displays Nodes' data from `from` till `to`
+     */
     std::ostream& displayDirectional(
-            NodePtr,
-            NodePtr,
+            NodePtr /* from */,
+            NodePtr /* to */,
             std::ostream&,
-            bool) const;
+            bool /* reverse */) const;
 
+    /*
+     * Pre-Conditions:
+     *      URStack<DataType> is initialized.
+     *
+     * Post-Conditions:
+     *      True if stack is empty, otherwise false.
+     *
+     * Used to check if the stack is empty.
+     */
     [[nodiscard]] inline bool isEmpty() const {
         return not size;
     }
 
+    /*
+     * Pre-Conditions:
+     *      URStack<DataType> is initialized.
+     *
+     * Post-Conditions:
+     *      True if stack has next actions, otherwise false.
+     *
+     * Used to check if the stack has next actions.
+     */
     [[nodiscard]] inline bool hasNext() const {
         return top and (top != current or isEmpty());
     }
 
 public:
+    /*
+     * Pre-Conditions:
+     *      Capacity of the URStack (optional, default 20).
+     *
+     * Post-Conditions:
+     *      URStack instance is created.
+     *      current is nullptr.
+     *      top is nullptr.
+     *      size is 0.
+     *      capacity is given.
+     *
+     * Parameterized constructor of the URStack class.
+     */
     explicit URStack(int capacity = 20);
 
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      const reference to action to be added.
+     *
+     * Post-Conditions:
+     *      New action is added,
+     *      necessary adjustments are made according to the requirements.
+     *
+     * Inserts a new action on top of the stack.
+     */
     void insertNewAction(const DataType&);
-    void undo(std::ostream& out = std::cout);
-    void redo(std::ostream& out = std::cout);
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output (requirement).
+     *
+     * Post-Conditions:
+     *      Display the data of the latest action to the given ostream,
+     *      then undo it (if possible).
+     *
+     * Undo the latest action in the stack.
+     */
+    void undo(std::ostream&);
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output (requirement).
+     *
+     * Post-Conditions:
+     *      Redo the latest deleted action,
+     *      then display its data to the given ostream (if possible).
+     *
+     * Redo the latest undone action in the stack.
+     */
+    void redo(std::ostream&);
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output.
+     *
+     * Post-Conditions:
+     *      Displays all actions in the stack to the given ostream.
+     *      Returns reference to the ostream.
+     *
+     * Displays all actions in the stack.
+     */
     [[nodiscard]] std::ostream& displayAll(std::ostream&) const;
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output.
+     *
+     * Post-Conditions:
+     *      Displays all currently existing actions in the stack
+     *      to the given ostream.
+     *      Returns reference to the ostream.
+     *
+     * Displays all existing actions in the stack.
+     */
     [[nodiscard]] std::ostream& displayPrevious(std::ostream&) const;
+
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *      ostream reference to display the output.
+     *
+     * Post-Conditions:
+     *      Displays all previously deleted actions in the stack
+     *      to the given ostream.
+     *      Returns reference to the ostream.
+     *
+     * Displays all deleted actions in the stack.
+     */
     [[nodiscard]] std::ostream& displayNext(std::ostream&) const;
 
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *
+     * Post-Conditions:
+     *      Number of actions in the stack is returned.
+     *
+     * Returns the number of actions in the stack.
+     */
     [[nodiscard]] inline int getSize() const {
         return size;
     };
 
+    /*
+     * Pre-Conditions:
+     *      URStack is initialized.
+     *
+     * Post-Conditions:
+     *      Capacity of the stack is returned.
+     *
+     * Returns the capacity of the stack.
+     */
     [[nodiscard]] inline int getCapacity() const {
         return capacity;
     };
