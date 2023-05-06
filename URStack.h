@@ -8,9 +8,10 @@
  *
  * Author:      Mahmoud Yaman Seraj Alddin
  *
- * Purpose:     Definition of the URStack function & its nested Node class.
+ * Purpose:     Definition of the URStack<DataType> class
+ *              & its nested Node class.
  *
- * List of public Node class Functions:
+ * List of public Node class Functions nested in URStack<DataType>:
  *      Node()
  *          No-arg constructor of the Node class.
  *
@@ -48,16 +49,53 @@
  *      void cut(int)
  *          Deletes all Nodes after N-hops.
  *
- * List of public URStack class Functions:
+ * List of private URStack<DataType> class Functions:
+ *      inline bool isEmpty() const
+ *          Used to check if the stack is empty.
  *
+ *      inline bool hasNext() const
+ *          Used to check if the stack has next actions.
+ *
+ *      std::ostream& displayDirectional(NodePtr from, NodePtr to,
+ *                                       std::ostream&, bool reverse) const
+ *          Displays Nodes' data from `from` till `to`
+ *
+ * List of public URStack<DataType> class Functions:
+ *      URStack(int capacity = 20)
+ *          Parameterized/Default constructor of the URStack class.
+ *
+ *      insertNewAction(const DataType&)
+ *          Inserts a new action on top of the stack.
+ *
+ *      void undo(std::ostream&)
+ *          Undo the latest action in the stack.
+ *
+ *      void redo(std::ostream&)
+ *          Redo the latest undone action in the stack.
+ *
+ *      std::ostream& displayAll(std::ostream&) const
+ *          Displays all actions in the stack.
+ *
+ *      std::ostream& displayPrevious(std::ostream&) const
+ *          Displays all existing actions in the stack.
+ *
+ *      std::ostream& displayNext(std::ostream&) const
+ *          Displays all deleted actions in the stack.
+ *
+ *      inline int getSize() const
+ *          Returns the number of actions in the stack.
+ *
+ *      inline int getCapacity() const
+ *          Returns the capacity of the stack.
  */
 
 #ifndef URSTACK_URSTACK_H
 #define URSTACK_URSTACK_H
 
-#include <string>
+#include <algorithm>
 #include <iostream>
-#include <utility>
+#include <stdexcept>
+#include <string>
 
 #include "CommonIO.h"
 
@@ -322,7 +360,7 @@ public:
      *      size is 0.
      *      capacity is given.
      *
-     * Parameterized constructor of the URStack class.
+     * Parameterized/Default constructor of the URStack class.
      */
     explicit URStack(int capacity = 20);
 
