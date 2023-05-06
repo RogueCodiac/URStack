@@ -205,7 +205,9 @@ void insertNewAction(URStack<string>& stack, ostream& out, istream& in) {
  */
 template<class T>
 void undo(URStack<T>& stack, ostream& out) {
+    /* Display empty line */
     out << '\n';
+
     stack.undo(out);
 
     /* Display two new lines, flush buffer */
@@ -227,7 +229,9 @@ void undo(URStack<T>& stack, ostream& out) {
  */
 template<class T>
 void redo(URStack<T>& stack, ostream& out) {
+    /* Display empty line */
     out << '\n';
+
     stack.redo(out);
 
     /* Display two new lines, flush buffer */
@@ -248,6 +252,9 @@ void redo(URStack<T>& stack, ostream& out) {
  */
 template<class T>
 ostream& displayAll(URStack<T>& stack, ostream& out) {
+    /* Display empty line */
+    out << '\n';
+
     /* Display the actions followed by two new lines */
     return stack.displayAll(out) << '\n' << endl;
 }
@@ -266,6 +273,9 @@ ostream& displayAll(URStack<T>& stack, ostream& out) {
  */
 template<class T>
 ostream& displayPrevious(URStack<T>& stack, ostream& out) {
+    /* Display empty line */
+    out << '\n';
+
     /* Display the actions followed by two new lines */
     return stack.displayPrevious(out) << '\n' << endl;
 }
@@ -284,6 +294,9 @@ ostream& displayPrevious(URStack<T>& stack, ostream& out) {
  */
 template<class T>
 ostream& displayNext(URStack<T>& stack, ostream& out) {
+    /* Display empty line */
+    out << '\n';
+
     /* Display the actions followed by two new lines */
     return stack.displayNext(out) << '\n' << endl;
 }
@@ -302,6 +315,7 @@ ostream& displayNext(URStack<T>& stack, ostream& out) {
  */
 template<class T>
 void displayStackInfo(URStack<T>& stack, ostream& out) {
+    /* Display empty line */
     out << '\n';
 
     /* Displays {size} / {capacity} */
