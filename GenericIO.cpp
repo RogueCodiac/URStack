@@ -20,8 +20,14 @@
  *          Displays the given prompt, writes user input into the given
  *          reference of T.
  */
+
+#ifndef URSTACK_GENERICIO_CPP
+#define URSTACK_GENERICIO_CPP
+
+#include <climits>
 #include <iostream>
 #include <string>
+
 
 /*
  * Pre-Conditions:
@@ -74,3 +80,5 @@ void get(const std::string& prompt, std::ostream& out,
 
     out << "\033[0m";  /* Text becomes normal */
 }
+
+#endif //URSTACK_GENERICIO_CPP

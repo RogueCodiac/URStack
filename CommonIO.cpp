@@ -8,7 +8,7 @@
  *
  * Author:      Mahmoud Yaman Seraj Alddin
  *
- * Purpose:     Implementation of the functions described in CustomIO.h
+ * Purpose:     Implementation of the functions described in CommonIO.h
  *
  * List of Functions:
  *      void displaySeparator(ostream&)
