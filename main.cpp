@@ -343,6 +343,8 @@ int main() {
     int options_num;
     ostream& out = cout;
     istream& in = cin;
+
+    /* Change DataType only here */
     URStack<string> stack;
 
     displaySeparator(out);
