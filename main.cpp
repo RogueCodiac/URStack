@@ -1,12 +1,79 @@
 /*
- * TODO Add list of functions,
+ * URStack Project
+ *
+ *
+ * main.cpp
+ *
+ * Date:        06/05/2023
+ *
+ * Author:      Mahmoud Yaman Seraj Alddin
+ *
+ * Purpose:     File containing the main function & other vital functions.
+ *
+ * List of Functions:
+ *      template<class T>
+ *      void clear(URStack<T>&, ostream&, istream&)
+ *          Assigns a new URStack<T> to the given reference.
+ *
+ *      int displayMenu(ostream&)
+ *          Displays the option menu.
+ *
+ *       template<class T>
+ *       void insertNewAction(URStack<T>&, ostream&, istream&)
+ *          Handles all the necessary input and output to
+ *          insert a new action to the URStack
+ *          using its insertNewAction function.
+ *          If T is string, a different variant of the function is called.
+ *
+ *       void insertNewAction(URStack<string>&, ostream&, istream&)
+ *          Handles all the necessary input and output to
+ *          insert a new action string to the URStack,
+ *          using its insertNewAction function.
+ *          Takes the whole line as input for the action string.
+ *
+ *       template<class T>
+ *       void undo(URStack<T>&, ostream&)
+ *           Handles all the necessary output
+ *           to undo an action in the URStack,
+ *           using the undo function.
+ *
+ *       template<class T>
+ *       void redo(URStack<T>&, ostream&)
+ *          Handles all the necessary output
+ *          to redo an action in the URStack,
+ *          using the redo function.
+ *
+ *       template<class T>
+ *       ostream& displayAll(URStack<T>&, ostream&)
+ *          Handles all the necessary output
+ *          to display all actions in the URStack,
+ *          using the displayAll function.
+ *
+ *       template<class T>
+ *       ostream& displayPrevious(URStack<T>&, ostream&)
+ *          Handles all the necessary output to display all previous
+ *          actions in the URStack, using the displayPrevious function.
+ *
+ *       template<class T>
+ *       ostream& displayNext(URStack<T>&, ostream&)
+ *          Handles all the necessary output to display all next
+ *          actions in the URStack, using the displayNext function.
+ *
+ *      template<class T>
+ *      void displayStackInfo(URStack<T>&, ostream&)
+ *          Handles all the necessary output to display
+ *          the current size, capacity, & whether the type
+ *          stored in the URStack is string or not.
+ *
+ *      int main()
+ *          Main function of the program
  */
 
 #include <iostream>
 #include <vector>
 
-#include "URStack.cpp"
 #include "CommonIO.h"
+#include "URStack.cpp"
 
 
 using namespace std;
@@ -20,6 +87,8 @@ using namespace std;
  * Post-Conditions:
  *      Given reference refers to a new URStack of the given, or default,
  *      capacity.
+ *
+ * Assigns a new URStack<T> to the given reference.
  */
 template<class T>
 void clear(URStack<T>& result, ostream& out, istream& in) {
@@ -109,7 +178,7 @@ void insertNewAction(URStack<T>& stack, ostream& out, istream& in) {
  *      to the given URStack.
  *
  * Handles all the necessary input and output to
- * insert a new action to the URStack using its insertNewAction function.
+ * insert a new action string to the URStack using its insertNewAction function.
  * Takes the whole line as input for the action string.
  */
 void insertNewAction(URStack<string>& stack, ostream& out, istream& in) {
@@ -243,7 +312,7 @@ void displayStackInfo(URStack<T>& stack, ostream& out) {
 
     displayDataMessage("Datatype:\t\t", out);
 
-    /* Displays String or Custom based on the type of T */
+    /* Displays "String" or "Custom" based on the type of T */
     displayDataMessage(is_same_v<T, string> ? "String" : "Custom",
             out) << '\n';
 }
